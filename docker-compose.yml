@@ -1,5 +1,11 @@
 version: '3.8'
 services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: always
+    
   db:
     image: postgres:12.4
     restart: always
@@ -19,6 +25,32 @@ services:
       - static_value:/app/static/
     depends_on:
       - db
+      - redis
+    command: >
+      sh -c "python3 manage.py makemigrations google_sheets
+             python3 manage.py migrate --no-input
+             python3 manage.py collectstatic --no-input
+             gunicorn kanal_servis.wsgi:application --bind 0.0.0.0:8000"
+    env_file:
+      - ./.env
+
+  celery:
+    build: ./kanal_servis
+    command: celery -A kanal_servis worker -l info
+    volumes:
+      - ./kanal_servis:/app
+    depends_on:
+      - redis
+    env_file:
+      - ./.env
+
+  celery-beat:
+    build: ./kanal_servis
+    command: celery -A kanal_servis beat -l info
+    volumes:
+      - ./kanal_servis:/app
+    depends_on:
+      - redis
     env_file:
       - ./.env
 
