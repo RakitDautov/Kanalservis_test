@@ -1,0 +1,18 @@
+<!-- templates/posts/index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+  </head>
+  <body>
+    <h1>Каналсервис</h1>
+    <table>
+        <tr><td>Номер заказа</td><td>Цена в долларах</td><td>Срок поставки</td><td>Цена в рублях</td></tr>
+        {% for order in orders %}
+            <tr><td>{{order.number}}</td><td>{{order.price_dollars}}</td><td>{{order.delivery_time}}</td><td>
+                {{order.price_rubles}}</td></tr>
+        {% empty %}
+            <p>Таблица пуста</p>
+        {% endfor %}
+    </table>
+  </body>
+</html>
