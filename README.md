@@ -14,9 +14,9 @@
 
 ### Запуск
     
-- Создайте .env файл с данными для PostgreSQL и Telegram Bot в корневую папку проекта
+- Создайте .env файл с данными для PostgreSQL и Telegram Bot в корневую папку проекта с переменными
 ``` DB_ENGINE, DB_NAME, POSTGRES_USER, POSTGRES_PASSWORD, DB_HOST, DB_PORT, TOKEN, CHAT_ID ```
-- Подключиться в телеграмме к боту рассылки
+- Подключитесь в телеграмме к боту рассылки
 - Создайте файл credentials.json в папке с Dockerfile с данными для Google API
 - Из папки с docker-compose.yml запустите команду
 ``` docker-compose up --build ```
