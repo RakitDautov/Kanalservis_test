@@ -1,12 +1,12 @@
 import os
-from kanal_servis.celery import app
 from datetime import datetime
+from dotenv import load_dotenv
 from telegram import Bot
 
+from kanal_servis.celery import app
 from .service import get_google_sheets_data, get_dollar_price
 from .models import Order
 
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -14,7 +14,7 @@ load_dotenv()
 @app.task
 def order_create():
     """Функция обновляет бд в соответствии с таблицей google sheets"""
-    google_sheets_data = get_google_sheets_data()['values']
+    google_sheets_data = get_google_sheets_data()["values"]
     number = google_sheets_data[0]
     price_dollars = google_sheets_data[1]
     delivery_time = google_sheets_data[2]
@@ -25,9 +25,11 @@ def order_create():
         Order.objects.update_or_create(
             number=int(number[i]),
             defaults={
-                'price_dollars': float(price_dollars[i]),
-                'delivery_time': datetime.strptime(delivery_time[i], "%d.%m.%Y"),
-                'price_rubles': price_rubles
+                "price_dollars": float(price_dollars[i]),
+                "delivery_time": datetime.strptime(
+                    delivery_time[i], "%d.%m.%Y"
+                ),
+                "price_rubles": price_rubles,
             },
         )
     my_orders = Order.objects.all()
@@ -38,7 +40,8 @@ def order_create():
 
 @app.task
 def new_price():
-    """Функция обновляет цену заказа в соответствии с актуальным курсом валют ЦБ"""
+    """Функция обновляет цену заказа в соответствии с
+    актуальным курсом валют ЦБ"""
     my_orders = Order.objects.all()
     price = get_dollar_price()
 
@@ -49,12 +52,13 @@ def new_price():
 
 @app.task
 def delivery_time_bot():
-    """Telegram bot отправляет сообщения пользователю если настал день доставки"""
-    bot = Bot(token=os.getenv('TOKEN'))
-    chat_id = os.getenv('CHAT_ID')
+    """Telegram bot отправляет сообщения пользователю если
+    настал день доставки"""
+    bot = Bot(token=os.getenv("TOKEN"))
+    chat_id = os.getenv("CHAT_ID")
     my_orders = Order.objects.all()
     today = datetime.today().date()
     for order in my_orders:
         if order.delivery_time == today:
-            text = f'Заказ №{order.number} будет доставлен сегодня'
+            text = f"Заказ №{order.number} будет доставлен сегодня"
             bot.send_message(chat_id, text)

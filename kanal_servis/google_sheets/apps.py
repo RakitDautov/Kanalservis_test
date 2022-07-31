@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class GoogleSheetsConfig(AppConfig):
-    name = 'google_sheets'
+    name = "google_sheets"

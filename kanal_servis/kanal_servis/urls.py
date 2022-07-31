@@ -18,6 +18,6 @@ from django.urls import path
 from google_sheets.views import home_page
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('home/', home_page),
+    path("admin/", admin.site.urls),
+    path("home/", home_page),
 ]
